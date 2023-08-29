@@ -35,12 +35,12 @@ const getData = (e) => {
 
 const dataToDom = (items) => {
     meals.innerHTML = ''
+    singleMeal.innerHTML = ''
 
     items.meals.forEach(meal => {
         const divEl = document.createElement("div")
         divEl.classList.add("meal")
-        divEl.innerHTML = `
-         <img src="${meal.strMealThumb}" alt="${meal.strMeal}" data-mealID="${meal.idMeal}"/>
+        divEl.innerHTML = `<img src="${meal.strMealThumb}" alt="${meal.strMeal}" data-mealID="${meal.idMeal}"/>
                 <div class="meal-info" >
                 <h4>${meal.strMeal}</h4>
                 </div>
@@ -58,7 +58,7 @@ const singleMealData = (e) => {
 }
 
 const scrollToSection = () => {
-    const scrollTarget = document.getElementById("single-meal-heading");
+    const scrollTarget = document.getElementById("single-meal");
     scrollTarget.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 
