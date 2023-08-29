@@ -121,9 +121,6 @@ input[type='text'] {
 #single-meal-heading {
     font-size: 22px;
     font-weight: 800;
-}
-
-#single-meal-heading:hover{
     color: #e09850;
     cursor: pointer;
     text-decoration: underline;
