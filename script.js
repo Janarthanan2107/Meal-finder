@@ -3,18 +3,23 @@ const searchInput = document.getElementById('search'),
     meals = document.getElementById('meals'),
     singleMeal = document.getElementById('single-meal');
 
-
 //global variables
+// using for searching
 const searchByTerm = "https://www.themealdb.com/api/json/v1/1/search.php?s="
+// using for clicking the data
 const searchById = "https://www.themealdb.com/api/json/v1/1/lookup.php?i="
 
 //functions
-const init = () => { }
+const init = () => {
+    fetchData(searchByTerm).then(data => dataToDom(data))
+}
 
-const fetchAllData = async (url) => {
+const fetchData = async (url) => {
     const res = await fetch(url)
     const data = await res.json()
-    dataToDom(data)
+    // dataToDom(data)
+    console.log(data)
+    return data
 }
 
 const getData = (e) => {
@@ -22,7 +27,7 @@ const getData = (e) => {
     const searchTerm = searchInput.value;
 
     if (searchTerm.trim()) {
-        fetchAllData(searchByTerm + `${searchTerm}`)
+        fetchData(searchByTerm + `${searchTerm}`).then(data => dataToDom(data))
     } else {
         meals.innerHTML = "Please enter a search term"
     }
@@ -34,35 +39,28 @@ const dataToDom = (items) => {
     items.meals.forEach(meal => {
         const divEl = document.createElement("div")
         divEl.classList.add("meal")
-        divEl.innerHTML = ` <img src="${meal.strMealThumb}" alt="${meal.strMeal}" />
-                <div class="meal-info" data-mealID="${meal.idMeal}">
-                <h3>${meal.strMeal}</h3>
+        divEl.innerHTML = `
+         <img src="${meal.strMealThumb}" alt="${meal.strMeal}" data-mealID="${meal.idMeal}"/>
+                <div class="meal-info" >
+                <h4>${meal.strMeal}</h4>
                 </div>
             `
         meals.appendChild(divEl)
     })
 }
 
-const scrollToSection = () => {
-    const scrollTarget = document.getElementById("single-meal-heading");
-    scrollTarget.scrollIntoView({ behavior: "smooth" });
-};
-
-const fetchSingleMealData = async (url) => {
-    const res = await fetch(url)
-    const data = await res.json()
-    singleMealDataToDom(data)
-}
-
 const singleMealData = (e) => {
-    if (e.target.classList.contains('meal-info')) {
+    if (e.target.getAttribute('data-mealID')) {
         const id = e.target.getAttribute('data-mealID')
-        fetchSingleMealData(searchById + `${id}`)
+        fetchData(searchById + `${id}`).then(data => singleMealDataToDom(data))
         scrollToSection()
-    } else {
-        singleMeal.innerHTML = "Something Went Wrong!!"
     }
 }
+
+const scrollToSection = () => {
+    const scrollTarget = document.getElementById("single-meal-heading");
+    scrollTarget.scrollIntoView({ behavior: "smooth", block: "start" });
+};
 
 const singleMealDataToDom = (mealData) => {
     const meal = mealData.meals[0];
@@ -88,11 +86,11 @@ const singleMealDataToDom = (mealData) => {
 
     singleMeal.innerHTML = `
         <div class="single-meal">
-            <h1 id='single-meal-heading'>${meal.strMeal}</h1>
+            <span id='single-meal-heading'>${meal.strMeal}</span>
             <img src="${meal.strMealThumb}" alt="${meal.strMeal}" />
             <div class="single-meal-info">
-                ${meal.strCategory ? `<p>${meal.strCategory}</p>` : ''}
-                ${meal.strArea ? `<p>${meal.strArea}</p>` : ''}
+                ${meal.strCategory ? `<p><b>Category</b> - ${meal.strCategory}</p>` : ''}
+                ${meal.strArea ? `<p><b>Place</b> -${meal.strArea}</p>` : ''}
             </div>
             <div class="main">
                 <p>${meal.strInstructions}</p>
